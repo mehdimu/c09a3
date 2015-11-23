@@ -59,7 +59,7 @@ app.use(bodyParser.urlencoded({
 	extended: true, limit: '5mb'
 }));
 
-app.use(multer({dest: __dirname + '/public/img/uploads/'}).array('photos', 12));
+app.use(multer({dest: __dirname + '/public/img/uploads/'}));
 
 // Session config, based on Express.session, values taken from config.js
 app.use(session({
