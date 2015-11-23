@@ -46,7 +46,7 @@ var app = express();
 app.set('port', process.env.PORT || config.port);
 
 // activate basic HTTP authentication (to protect your solution files)
-app.use(basicAuth(config.basicAuthUser, config.basicAuthPass));  
+app.use(basicAuth('splat', 'pass'));  
 
 // change param to control level of logging
 app.use(logger(config.env));  /* 'default', 'short', 'tiny', 'dev' */
@@ -62,9 +62,10 @@ app.use(bodyParser.urlencoded({
 app.use(multer({dest: __dirname + '/public/img/uploads/'}));
 
 // Session config, based on Express.session, values taken from config.js
+
 app.use(session({
 	name: 'splat.sess',
-	secret: config.sessionSecret,  // A3 ADD CODE
+	secret: 'stuff',  // A3 ADD CODE
 	rolling: true,  // reset session timer on every client access
 	cookie: { maxAge:config.sessionTimeout,  // A3 ADD CODE
 		  // maxAge: null,  // no-expire session-cookies for testing
