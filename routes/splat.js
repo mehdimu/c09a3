@@ -23,7 +23,7 @@ fs.exists(__dirname + '/../public/img/uploads', function (exists) {
 
 // Connect to database
 mongoose.connect('mongodb://' +config.dbuser+ ':' +config.dbpass+
-                '@10.15.2.164/' + config.dbname);
+                '@ds053164.mongolab.com:53164/' + config.dbname);
 
 // Mongoose Schemas
 
