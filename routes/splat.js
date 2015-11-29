@@ -360,9 +360,8 @@ exports.auth = function (req, res) {
       res.status(403).send('Invalid username-password combination, please try again');
     };
     User.findOne({username:username}, function(err, user){
-      if (user !== null) {
+      if (user !== null & bcrypt.compareSync(password, hash)) {
       /* A3 ADD CODE BLOCK ... */
-	  bcrypt.compareSync(password, hash);
 	  var sess = req.session;  // create session
 	  sess.auth = true;
 	  sess.username = username;
