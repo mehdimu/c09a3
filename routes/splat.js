@@ -360,20 +360,21 @@ exports.auth = function (req, res) {
       res.status(403).send('Invalid username-password combination, please try again');
     };
     User.findOne({username:username}, function(err, user){
+	/* A3 ADD CODE BLOCK ASRA */
+	console.log(bcrypt.compareSync(password, user.password));
       if (user !== null && bcrypt.compareSync(password, user.password)) {
-      /* A3 ADD CODE BLOCK ... */
-	  var sess = req.session;  // create session
-	  sess.auth = true;
-	  sess.username = username;
-	  sess.userid = user.id;
-	  // set session-timeout, from config file
-          if (req.body.remember) {
-              // if "remember me" selected on signin form,
-	      // extend session to 10*default-session-timeout
-	      // A3 ADD CODE BLOCK
-	  }
-          res.status(200).send({'userid': user.id, 'username': username});
-	  // A3 ADD CODE BLOCK
+		  var sess = req.session;  // create session
+		  sess.auth = true;
+		  sess.username = username;
+		  sess.userid = user.id;
+		  // set session-timeout, from config file
+			  if (req.body.remember) {
+				  // if "remember me" selected on signin form,
+			  // extend session to 10*default-session-timeout
+			  // A3 ADD CODE BLOCK
+		  }
+			  res.status(200).send({'userid': user.id, 'username': username});
+		  // A3 ADD CODE BLOCK
       } else if (!err) {  // unrecognized username, but not DB error
         res.status(403).send('Invalid username-password combination, please try again');
       } else {  // error response from DB
