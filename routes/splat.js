@@ -361,7 +361,6 @@ exports.auth = function (req, res) {
     };
     User.findOne({username:username}, function(err, user){
 	/* A3 ADD CODE BLOCK ASRA */
-	console.log(bcrypt.compareSync(password, user.password));
       if (user !== null && bcrypt.compareSync(password, user.password)) {
 		  var sess = req.session;  // create session
 		  sess.auth = true;
@@ -371,8 +370,9 @@ exports.auth = function (req, res) {
 			  if (req.body.remember) {
 				  // if "remember me" selected on signin form,
 			  // extend session to 10*default-session-timeout
-			  // A3 ADD CODE BLOCK
-		  }
+			  // A3 ADD CODE BLOCK HELP ALI
+			  sessionTimeout = config.sessionTimeout * 10;
+			}
 			  res.status(200).send({'userid': user.id, 'username': username});
 		  // A3 ADD CODE BLOCK
       } else if (!err) {  // unrecognized username, but not DB error
@@ -383,6 +383,8 @@ exports.auth = function (req, res) {
       }
     });
   } else { // logout request
+	req.session.auth = false; //ADD CODE ASRA
+	req.username = undefined; //ADD CODE ASRA
     req.session.destroy(); // destroy session in the session-store
     res.status(200).send({'userid': undefined, 'username': undefined});
   };
