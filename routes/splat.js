@@ -389,23 +389,28 @@ exports.auth = function (req, res) {
 
 exports.signup = function(req, res) {
   var user = new User(req.body);
-    /* A3 ADD CODE BLOCK ... */
+  bcrypt.genSalt(10, function(err,salt){
+	bcrypt.hash('B4c0\/\', salt, function(err, hash){
+	//Store hash in your pw DB
+	/* A3 ADD CODE BLOCK ... */
     // store the hashed-with-salt password in the DB
-      user.password = 0;  // A3 ADD CODE
-      user.save(function (serr, result) {
-        if (!serr) {
-          req.session.auth = true;
-          req.session.username = result.username;
-          req.session.userid = result.id;
-          res.status(200).send({'username':result.username, 'userid':result.id});
+		user.password = 0;  // A3 ADD CODE
+		user.save(function (serr, result) {
+		if (!serr) {
+			req.session.auth = true;
+			req.session.username = result.username;
+			req.session.userid = result.id;
+			res.status(200).send({'username':result.username, 'userid':result.id});
         } else {
-          console.log(serr);
-          if (serr.err && serr.err.indexOf("E11000") !== -1) {
-            res.status(403).send("Sorry, username '"+user.username+
-                "' is already taken; please choose another username");
-          } else {
-            res.status(500).send("Unable to create account at this time; please try again later (" +serr.message+ ")");
-          }
+			console.log(serr);
+			if (serr.err && serr.err.indexOf("E11000") !== -1) {
+				res.status(403).send("Sorry, username '"+user.username+
+					"' is already taken; please choose another username");
+			} else {
+				res.status(500).send("Unable to create account at this time; please try again later (" +serr.message+ ")");
+			}
         }
       });
+	});
+  });
 };
