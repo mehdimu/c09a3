@@ -362,6 +362,7 @@ exports.auth = function (req, res) {
     User.findOne({username:username}, function(err, user){
       if (user !== null) {
       /* A3 ADD CODE BLOCK ... */
+	  bcrypt.compareSync(password, hash);
 	  var sess = req.session;  // create session
 	  sess.auth = true;
 	  sess.username = username;
@@ -389,11 +390,11 @@ exports.auth = function (req, res) {
 
 exports.signup = function(req, res) {
   var user = new User(req.body);
-    /* A3 ADD CODE BLOCK ... */
+    /* A3 ADD CODE BLOCK Bcrypt Added Asra */
 	var salt = bcrypt.genSaltSync(10);
-	var hash = bcrypt.hashSync('B4c0/\/',salt);
+	var hash = bcrypt.hashSync(user.password,salt);
     // store the hashed-with-salt password in the DB
-      user.password = hash;  // A3 ADD CODE
+      user.password = hash;  // Asra
       user.save(function (serr, result) {
         if (!serr) {
           req.session.auth = true;
