@@ -7,6 +7,8 @@
  * the value returned by require(), in this case e.g. splat.api
  */
 var http = require("http"),
+    https = require("https"),
+    helmet = require('helmet'),
     express = require("express"),
     fs = require("fs"),
     path = require("path"),
@@ -25,6 +27,7 @@ var http = require("http"),
     // such as "port"
     config = require("./config"),
     splat = require('./routes/splat.js');  // route handlers
+
 
 // middleware check that req is associated with an authenticated session
 function isAuthd(req, res, next) {
@@ -153,9 +156,25 @@ app.use(function (req, res) {
     res.status(404).send('<h3>File Not Found</h3>');
 });
 
+var options = {
+    key: fs.readFileSync('key.pem'), //RSA private-key
+    cert: fs.readFileSync('cert.pem') //RSA public-key
+};
 
-// Start HTTP server
-http.createServer(app).listen(app.get('port'), function (){
+app.use(helmet.hsts({
+    maxAge:777600000,
+    includeSubdomains:true
+
+}));
+
+app.get('/', function(req, res) {
+  res.send('Time to secure your application...');
+});
+
+// Start HTTPS server
+https.createServer(options, app).listen(app.get('port'), function (){
   console.log("Express server listening on port %d in %s mode",
                 app.get('port'), config.env );
 });
+
+
