@@ -29,18 +29,44 @@ var http = require("http"),
 // middleware check that req is associated with an authenticated session
 function isAuthd(req, res, next) {
     // A3 ADD CODE BLOCK
+    if (req.session && req.session.auth) {
         return next();
+    } else {
+        res.status(403).send('User must sign in before performing this task.');
+    }
 };
 
 // middleware check that the session-userid matches the userid passed
 // in the request body, e.g. when deleting or updating a model
 function hasPermission(req, res, next) {
-    // A3 ADD CODE BLOCK
-        return next();
+    console.log("hello body");
+    console.log(req.body);
+    console.log("hello params");
+    console.log(req.params);
+    console.log(req.session);
+
+    splat.Movie.findById(req.params.id, function(err, movie) {
+        if (err) {
+            res.status(500).send("Sorry, unable to retrieve movie model at this time");
+        } else if (!movie) {
+            res.status(404).send("Sorry, that movie does not exists");
+        } else {
+            console.log(movie.userid, req.session.userid);
+            if (movie.userid == req.session.userid) {
+                return next();
+            }
+            else {
+                res.status(403).send("Same user must make changes");
+            }
+        }
+
+    });
+    
 };
 
 // Create Express app-server
 var app = express();   
+
 
 // use PORT enviro variable, or local config-file value
 app.set('port', process.env.PORT || config.port);
@@ -49,7 +75,7 @@ app.set('port', process.env.PORT || config.port);
 app.use(basicAuth('splat', 'pass'));  
 
 // change param to control level of logging
-app.use(logger(config.env));  /* 'default', 'short', 'tiny', 'dev' */
+app.use(logger(config.default));  /* 'default', 'short', 'tiny', 'dev' */
 
 // use compression (gzip) to reduce size of HTTP responses
 app.use(compression());
@@ -81,15 +107,18 @@ app.use(methodOverride());
 // App routes (API) - implementation resides in routes/splat.js
 
 // Heartbeat test of server API
+
 app.get('/', splat.api);
 
 // Retrieve a single movie by its id attribute
 app.get('/movies/:id', splat.getMovie);
 
 // Retrieve a collection of all movies
+
 app.get('/movies', splat.getMovies);
 
 // Create a new movie in the collection
+
 app.post('/movies', isAuthd, splat.addMovie);
 
 // Update an existing movie in the collection

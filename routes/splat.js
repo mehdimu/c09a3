@@ -68,6 +68,8 @@ ReviewSchema.index({"reviewname":1, "reviewaffil":1, "movieid":1},
 
 // Models
 var Movie = mongoose.model('Movie', MovieSchema);
+exports.Movie = Movie;
+
 var User = mongoose.model('User', UserSchema);
 var Review = mongoose.model('Review', ReviewSchema);
 
@@ -342,15 +344,15 @@ exports.playMovie = function(req, res) {
     });
 };
 
-exports.isAuth = function (req, res) {
-console.log('isAuth ', req.session);
-    if (req.session && req.session.auth) {
-            res.send(200, {'userid': req.session.userid,
-                'username': req.session.username});
-    } else {
-            res.status(200).send({'userid': '', 'username': ''});
-    };
-};
+// exports.isAuth = function (req, res) {
+// console.log('isAuth ', req.session);
+//     if (req.session && req.session.auth) {
+//             res.send(200, {'userid': req.session.userid,
+//                 'username': req.session.username});
+//     } else {
+//             res.status(200).send({'userid': '', 'username': ''});
+//     };
+// };
 
 exports.auth = function (req, res) {
   if (req.body.login) {   // login request
@@ -371,7 +373,7 @@ exports.auth = function (req, res) {
 				  // if "remember me" selected on signin form,
 			  // extend session to 10*default-session-timeout
 			  // A3 ADD CODE BLOCK HELP ALI
-			  sessionTimeout = config.sessionTimeout * 10;
+        sess.sessionTimeout = 10 * config.sessionTimeout;
 			}
 			  res.status(200).send({'userid': user.id, 'username': username});
 		  // A3 ADD CODE BLOCK
@@ -383,10 +385,10 @@ exports.auth = function (req, res) {
       }
     });
   } else { // logout request
-	req.session.auth = false; //ADD CODE ASRA
-	req.username = undefined; //ADD CODE ASRA
-    req.session.destroy(); // destroy session in the session-store
-    res.status(200).send({'userid': undefined, 'username': undefined});
+      req.session.auth = false; //ADD CODE ASRA
+      req.username = undefined; //ADD CODE ASRA
+      req.session.destroy(); // destroy session in the session-store
+      res.status(200).send({'userid': undefined, 'username': undefined});
   };
 };
 
