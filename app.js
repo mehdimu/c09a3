@@ -39,12 +39,6 @@ function isAuthd(req, res, next) {
 // middleware check that the session-userid matches the userid passed
 // in the request body, e.g. when deleting or updating a model
 function hasPermission(req, res, next) {
-    console.log("hello body");
-    console.log(req.body);
-    console.log("hello params");
-    console.log(req.params);
-    console.log(req.session);
-
     splat.Movie.findById(req.params.id, function(err, movie) {
         if (err) {
             res.status(500).send("Sorry, unable to retrieve movie model at this time");
