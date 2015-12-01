@@ -8,8 +8,8 @@
  */
 var http = require("http"),
     https = require("https"),
-    helmet = require('helmet'),
     express = require("express"),
+    helmet = require("helmet"),
     fs = require("fs"),
     path = require("path"),
     url = require("url"),
@@ -28,6 +28,10 @@ var http = require("http"),
     config = require("./config"),
     splat = require('./routes/splat.js');  // route handlers
 
+var options = {
+  key: fs.readFileSync('key.pem'),  // RSA private-key
+  cert: fs.readFileSync('cert.pem')  // RSA public-key certificate
+};
 
 // middleware check that req is associated with an authenticated session
 function isAuthd(req, res, next) {
@@ -92,7 +96,8 @@ app.use(session({
 	rolling: true,  // reset session timer on every client access
 	cookie: { maxAge:config.sessionTimeout,  // A3 ADD CODE
 		  // maxAge: null,  // no-expire session-cookies for testing
-		  httpOnly: true },
+		  httpOnly: true,
+          secure: true },
 	saveUninitialized: false,
 	resave: false
 }));
@@ -100,6 +105,16 @@ app.use(session({
 // checks req.body for HTTP method overrides
 app.use(methodOverride());
 
+//Starting -- Add an HSTS header to all responses from your server
+app.use(helmet.hsts({
+  maxAge: 7776000000,
+  includeSubdomains: true
+}));
+
+app.get('/', function(req, res) {
+  res.send('Time to secure your application...');
+});
+//Ending -- Add an HSTS header to all responses from your serve
 
 // App routes (API) - implementation resides in routes/splat.js
 
@@ -156,25 +171,32 @@ app.use(function (req, res) {
     res.status(404).send('<h3>File Not Found</h3>');
 });
 
-var options = {
-    key: fs.readFileSync('key.pem'), //RSA private-key
-    cert: fs.readFileSync('cert.pem') //RSA public-key
-};
-
-app.use(helmet.hsts({
-    maxAge:777600000,
-    includeSubdomains:true
-
-}));
-
-app.get('/', function(req, res) {
-  res.send('Time to secure your application...');
+// Setup for rendering csurf token into index.html at app-startup
+app.engine('.html', require('ejs').__express);
+app.set('views', __dirname + '/public');
+// When client-side requests index.html, perform template substitution on it
+app.get('/index.html', function(req, res) {
+    // req.csrfToken() returns a fresh random CSRF token value
+    res.render('index.html', {csrftoken: req.csrfToken()});
 });
 
-// Start HTTPS server
+
+//BEGIN CSRF TOKEN
+app.use(function (err, req, res, next) {
+  if (err.code !== 'EBADCSRFTOKEN') 
+    return next(err);
+  // handle CSRF token errors here
+  res.status(403)
+  res.send('Please reload the app, the session has expired.')
+});
+
+app.get('/form', function(req, res) {
+  res.render('send', { csrfToken: req.csrfToken() })
+})
+//END CSRF TOKEN
+
+// Start HTTP server
 https.createServer(options, app).listen(app.get('port'), function (){
   console.log("Express server listening on port %d in %s mode",
                 app.get('port'), config.env );
 });
-
-

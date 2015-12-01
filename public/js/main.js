@@ -1,6 +1,16 @@
 'use strict';
 
 var splat =  splat || {};
+Backbone.ajax = function() {
+// Invoke $.ajaxSetup in the context of Backbone.$
+    Backbone.$.ajaxSetup.call(Backbone.$, {
+        beforeSend: function(jqXHR){
+            // Add CSRF token value to Ajax request headers.
+            jqXHR.setRequestHeader("X-CSRF-Token", splat.token);
+        }});
+    return Backbone.$.ajax.apply(Backbone.$, arguments);
+};
+
  
 splat.AppRouter = Backbone.Router.extend({
 
@@ -143,6 +153,8 @@ Backbone.View.prototype.close = function () {
     this.unbind();  // implied by remove() in BB 1.0.0 and later
 
 };
+
+
 
 splat.utils.loadTemplates(['Home', 'Header', 'About', 'MovieThumb',
 	'Details', 'MovieForm', 'MovieImg', 'Reviewer', 'ReviewsView',
