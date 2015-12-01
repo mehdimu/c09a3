@@ -152,10 +152,10 @@ app.post('/movies/:id/reviews', isAuthd, splat.addReview);
 app.get('/movies/:id/video', splat.playMovie);
 
 // User login/logout
-app.put('/user', splat.auth);
+app.put('/auth', splat.auth);
 
 // User signup
-app.post('/user', splat.signup);
+app.post('/auth', splat.signup);
 
 // location of static content
 app.use(express.static(__dirname +  "/public"));
@@ -171,6 +171,16 @@ app.use(function (req, res) {
     res.status(404).send('<h3>File Not Found</h3>');
 });
 
+//BEGIN CSRF TOKEN
+app.use(function (err, req, res, next) {
+  if (err.code !== 'EBADCSRFTOKEN') 
+    return next(err);
+  // handle CSRF token errors here
+  res.status(403)
+  res.send('Please reload the app, the session has expired.')
+});
+//END CSRF TOKEN
+
 // Setup for rendering csurf token into index.html at app-startup
 app.engine('.html', require('ejs').__express);
 app.set('views', __dirname + '/public');
@@ -181,19 +191,7 @@ app.get('/index.html', function(req, res) {
 });
 
 
-//BEGIN CSRF TOKEN
-app.use(function (err, req, res, next) {
-  if (err.code !== 'EBADCSRFTOKEN') 
-    return next(err);
-  // handle CSRF token errors here
-  res.status(403)
-  res.send('Please reload the app, the session has expired.')
-});
 
-app.get('/form', function(req, res) {
-  res.render('send', { csrfToken: req.csrfToken() })
-})
-//END CSRF TOKEN
 
 // Start HTTP server
 https.createServer(options, app).listen(app.get('port'), function (){

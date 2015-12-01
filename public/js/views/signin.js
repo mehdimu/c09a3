@@ -64,7 +64,6 @@ splat.Signin = Backbone.View.extend({
                     splat.utils.showAlert('Signin Failed',
 			response.error, 'alert-danger');
 		} else {
-		    splat.token = response.token;
 		    splat.userid = response.userid;
 		    splat.username = response.username;
                     splat.utils.showAlert('Signin Successful!',
@@ -85,7 +84,6 @@ splat.Signin = Backbone.View.extend({
 	this.model.save(null, {
 	    type: 'put',
 	    success: function(model, response) {
-                splat.token = response.token;
 		splat.utils.showAlert('Signout Successful!',
 			'Please Come Back Soon', 'alert-success');
 		Backbone.trigger('signedOut', response);
