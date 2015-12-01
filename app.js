@@ -190,9 +190,6 @@ app.get('/index.html', function(req, res) {
     res.render('index.html', {csrftoken: req.csrfToken()});
 });
 
-
-
-
 // Start HTTP server
 https.createServer(options, app).listen(app.get('port'), function (){
   console.log("Express server listening on port %d in %s mode",

@@ -33,8 +33,9 @@
 
     <script src="js/utils.js"></script>
     <!-- set CSRF token -->
+    <!-- Ali should it be <%-csrftoken%> -->
     <script type="text/javascript">
-	splat.token = '<%= csrftoken %>';
+	splat.token = '<%= csrftoken %>'; 
     </script>
     <script src="js/models/review.js"></script>
     <script src="js/collections/reviews.js"></script>
