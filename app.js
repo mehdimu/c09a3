@@ -185,7 +185,7 @@ app.use(function (err, req, res, next) {
 app.engine('.html', require('ejs').__express);
 app.set('views', __dirname + '/public');
 // When client-side requests index.html, perform template substitution on it
-app.get('/index.html', function(req, res) {
+app.get('./index.html', function(req, res) {
     // req.csrfToken() returns a fresh random CSRF token value
     res.render('index.html', {csrftoken: req.csrfToken()});
 });
