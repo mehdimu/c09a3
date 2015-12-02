@@ -8,6 +8,7 @@
  */
 var http = require("http"),
     https = require("https"),
+    csrf = require("csurf"),
     express = require("express"),
     helmet = require("helmet"),
     fs = require("fs"),
@@ -73,7 +74,9 @@ var app = express();
 app.set('port', process.env.PORT || config.port);
 
 // activate basic HTTP authentication (to protect your solution files)
+
 // app.use(basicAuth('splat', 'pass'));
+
 
 // change param to control level of logging
 app.use(logger(config.default));  /* 'default', 'short', 'tiny', 'dev' */
@@ -86,10 +89,10 @@ app.use(bodyParser.urlencoded({
 	extended: true, limit: '5mb'
 }));
 
+
 app.use(multer({dest: __dirname + '/public/img/uploads/'}));
 
 // Session config, based on Express.session, values taken from config.js
-
 app.use(session({
 	name: 'splat.sess',
 	secret: 'stuff',  // A3 ADD CODE
@@ -101,6 +104,8 @@ app.use(session({
 	saveUninitialized: false,
 	resave: false
 }));
+
+app.use(csrf());
 
 // checks req.body for HTTP method overrides
 app.use(methodOverride());
@@ -157,6 +162,30 @@ app.put('/auth', splat.auth);
 // User signup
 app.post('/auth', splat.signup);
 
+
+// Setup for rendering csurf token into index.html at app-startup
+app.engine('.html', require('ejs').__express);
+app.set('views', __dirname + '/public');
+// When client-side requests index.html, perform template substitution on it
+app.get('/index.html', function(req, res) {
+    console.log("------------");
+    console.log(req);
+    // req.csrfToken() returns a fresh random CSRF token value
+    res.render('index.html', {csrftoken: req.csrfToken()});
+});
+
+//BEGIN CSRF TOKEN
+app.use(function (err, req, res, next) {
+  if (err.code == 'EBADCSRFTOKEN'){
+	res.status(403).send('Please reload the app, the session has expired.');
+   }else{
+  // handle CSRF token errors here
+	return next(err);
+}
+
+});
+//END CSRF TOKEN
+
 // location of static content
 app.use(express.static(__dirname +  "/public"));
 
@@ -171,6 +200,7 @@ app.use(function (req, res) {
     res.status(404).send('<h3>File Not Found</h3>');
 });
 
+<<<<<<< HEAD
 //BEGIN CSRF TOKEN
 app.use(function (err, req, res, next) {
   if (err.code !== 'EBADCSRFTOKEN')
@@ -191,6 +221,9 @@ app.get('/index.html', function(req, res) {
 });
 
 // Start HTTP server
+=======
+// Start HTTPS server
+>>>>>>> 65e36318121be0ef38bd4dba4657696471b2c881
 https.createServer(options, app).listen(app.get('port'), function (){
   console.log("Express server listening on port %d in %s mode",
                 app.get('port'), config.env );

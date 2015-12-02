@@ -1,16 +1,16 @@
 'use strict';
 
 var splat =  splat || {};
+
 Backbone.ajax = function() {
-// Invoke $.ajaxSetup in the context of Backbone.$
-    Backbone.$.ajaxSetup.call(Backbone.$, {
-        beforeSend: function(jqXHR){
-            // Add CSRF token value to Ajax request headers.
-            jqXHR.setRequestHeader("X-CSRF-Token", splat.token);
-        }});
+    // Invoke $.ajaxSetup in the context of Backbone.$
+    Backbone.$.ajaxSetup.call(Backbone.$, {beforeSend: function(jqXHR){
+        jqXHR.setRequestHeader("X-CSRF-Token", splat.csrftoken);
+    }});
+console.log("CSRF TOKEN:");
+console.log(splat.csrftoken);
     return Backbone.$.ajax.apply(Backbone.$, arguments);
 };
-
 
 splat.AppRouter = Backbone.Router.extend({
 
