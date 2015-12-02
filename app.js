@@ -21,7 +21,7 @@ var http = require("http"),
     methodOverride = require("method-override"),
     directory = require("serve-index"),
     errorHandler = require("errorhandler"),
-    basicAuth = require("basic-auth-connect"),  // add for HTTP auth
+    // basicAuth = require("basic-auth-connect"),  // add for HTTP auth
 
     // config is an object module, that defines app-config attribues,
     // such as "port"
@@ -62,18 +62,18 @@ function hasPermission(req, res, next) {
         }
 
     });
-    
+
 };
 
 // Create Express app-server
-var app = express();   
+var app = express();
 
 
 // use PORT enviro variable, or local config-file value
 app.set('port', process.env.PORT || config.port);
 
 // activate basic HTTP authentication (to protect your solution files)
-app.use(basicAuth('splat', 'pass'));  
+// app.use(basicAuth('splat', 'pass'));
 
 // change param to control level of logging
 app.use(logger(config.default));  /* 'default', 'short', 'tiny', 'dev' */
@@ -173,7 +173,7 @@ app.use(function (req, res) {
 
 //BEGIN CSRF TOKEN
 app.use(function (err, req, res, next) {
-  if (err.code !== 'EBADCSRFTOKEN') 
+  if (err.code !== 'EBADCSRFTOKEN')
     return next(err);
   // handle CSRF token errors here
   res.status(403)
