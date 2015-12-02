@@ -8,6 +8,8 @@ Backbone.ajax = function() {
             // Add CSRF token value to Ajax request headers.
             jqXHR.setRequestHeader("X-CSRF-Token", splat.token);
         }});
+	console.log('token being printed');
+	console.log(splat.token);
     return Backbone.$.ajax.apply(Backbone.$, arguments);
 };
 
