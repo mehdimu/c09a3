@@ -8,6 +8,7 @@
  */
 var http = require("http"),
     https = require("https"),
+    csrf = require("csurf"),
     express = require("express"),
     helmet = require("helmet"),
     fs = require("fs"),
@@ -18,6 +19,7 @@ var http = require("http"),
     compression = require("compression"),
     session = require("express-session"),
     bodyParser = require("body-parser"),
+    cookieParser = require('cookie-parser'),
     methodOverride = require("method-override"),
     directory = require("serve-index"),
     errorHandler = require("errorhandler"),
@@ -86,10 +88,10 @@ app.use(bodyParser.urlencoded({
 	extended: true, limit: '5mb'
 }));
 
+
 app.use(multer({dest: __dirname + '/public/img/uploads/'}));
 
 // Session config, based on Express.session, values taken from config.js
-
 app.use(session({
 	name: 'splat.sess',
 	secret: 'stuff',  // A3 ADD CODE
@@ -101,6 +103,8 @@ app.use(session({
 	saveUninitialized: false,
 	resave: false
 }));
+
+app.use(csrf());
 
 // checks req.body for HTTP method overrides
 app.use(methodOverride());
@@ -157,6 +161,25 @@ app.put('/auth', splat.auth);
 // User signup
 app.post('/auth', splat.signup);
 
+
+// Setup for rendering csurf token into index.html at app-startup
+app.engine('.html', require('ejs').__express);
+app.set('views', __dirname + '/public');
+// When client-side requests index.html, perform template substitution on it
+app.get('/index.html', function(req, res) {
+    // req.csrfToken() returns a fresh random CSRF token value
+    res.render('index.html', {csrftoken: req.csrfToken()});
+});
+//BEGIN CSRF TOKEN
+app.use(function (err, req, res, next) {
+  if (err.code !== 'EBADCSRFTOKEN'){ 
+    return next(err);}
+  // handle CSRF token errors here
+  res.status(403);
+  res.send('Please reload the app, the session has expired.');
+});
+//END CSRF TOKEN
+
 // location of static content
 app.use(express.static(__dirname +  "/public"));
 
@@ -171,26 +194,7 @@ app.use(function (req, res) {
     res.status(404).send('<h3>File Not Found</h3>');
 });
 
-//BEGIN CSRF TOKEN
-app.use(function (err, req, res, next) {
-  if (err.code !== 'EBADCSRFTOKEN') 
-    return next(err);
-  // handle CSRF token errors here
-  res.status(403)
-  res.send('Please reload the app, the session has expired.')
-});
-//END CSRF TOKEN
-
-// Setup for rendering csurf token into index.html at app-startup
-app.engine('.html', require('ejs').__express);
-app.set('views', __dirname + '/public');
-// When client-side requests index.html, perform template substitution on it
-app.get('./index.html', function(req, res) {
-    // req.csrfToken() returns a fresh random CSRF token value
-    res.render('index.html', {csrftoken: req.csrfToken()});
-});
-
-// Start HTTP server
+// Start HTTPS server
 https.createServer(options, app).listen(app.get('port'), function (){
   console.log("Express server listening on port %d in %s mode",
                 app.get('port'), config.env );
