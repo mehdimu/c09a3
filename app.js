@@ -200,7 +200,7 @@ app.use(function (req, res) {
     res.status(404).send('<h3>File Not Found</h3>');
 });
 
-<<<<<<< HEAD
+
 //BEGIN CSRF TOKEN
 app.use(function (err, req, res, next) {
   if (err.code !== 'EBADCSRFTOKEN')
@@ -221,9 +221,6 @@ app.get('/index.html', function(req, res) {
 });
 
 // Start HTTP server
-=======
-// Start HTTPS server
->>>>>>> 65e36318121be0ef38bd4dba4657696471b2c881
 https.createServer(options, app).listen(app.get('port'), function (){
   console.log("Express server listening on port %d in %s mode",
                 app.get('port'), config.env );
