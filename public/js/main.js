@@ -7,8 +7,7 @@ Backbone.ajax = function() {
     Backbone.$.ajaxSetup.call(Backbone.$, {beforeSend: function(jqXHR){
         jqXHR.setRequestHeader("X-CSRF-Token", splat.csrftoken);
     }});
-console.log("CSRF TOKEN:");
-console.log(splat.csrftoken);
+    console.log(splat.csrftoken);
     return Backbone.$.ajax.apply(Backbone.$, arguments);
 };
 
@@ -43,7 +42,7 @@ splat.AppRouter = Backbone.Router.extend({
         };
         splat.app.showView('#content', this.homeView);
 	// hilite "Splat!" in header
-        this.headerView.selectMenuItem('home-menu'); 
+        this.headerView.selectMenuItem('home-menu');
     },
 
     about: function() {
@@ -62,7 +61,7 @@ splat.AppRouter = Backbone.Router.extend({
 	    splat.moviesView = new splat.MoviesView({collection:self.movies});
             splat.app.showView('#content', splat.moviesView);
 	});
-        this.headerView.selectMenuItem('browse-menu'); 
+        this.headerView.selectMenuItem('browse-menu');
     },
 
     editMovie: function(id) {
@@ -91,7 +90,7 @@ splat.AppRouter = Backbone.Router.extend({
     addMovie: function() {
         var movie = new splat.Movie();  // create new Movie
 	// Details expects movie to have a collection
-	movie.collection = this.movies; 
+	movie.collection = this.movies;
 	this.moviesLoaded.done(function() {
             var detailsView = new splat.Details({model: movie});
             splat.app.showView('#content', detailsView);
@@ -144,7 +143,7 @@ splat.AppRouter = Backbone.Router.extend({
 Backbone.View.prototype.close = function () {
     /* When closing a view, give it a chance to perform it's own custom
      * onClose processing, e.g. handle subview closes, then remove the
-     * view from the DOM and unbind events from it.  Based on approach 
+     * view from the DOM and unbind events from it.  Based on approach
      * suggested by D. Bailey (author of Marionette) */
     if (this.onClose) {
         this.onClose();

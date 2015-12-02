@@ -13,7 +13,7 @@
   <body>
     <header class="header"></header>
 
-    <main class="container-fluid"> 
+    <main class="container-fluid">
       <div class="row" id="mainrow">
 
           <div id="content">  <!-- implicitly a single column within row -->
@@ -32,11 +32,7 @@
     <script src="js/lib/bootstrap-min.js"></script>
 
     <script src="js/utils.js"></script>
-    <!-- set CSRF token -->
-    <!-- Ali should it be <%-csrftoken%> -->
-    <script type="text/javascript">
-	splat.token = '<%= csrftoken %>'; 
-    </script>
+
     <script src="js/models/review.js"></script>
     <script src="js/collections/reviews.js"></script>
     <script src="js/models/movie.js"></script>
@@ -56,6 +52,11 @@
     <script src="js/views/reviewer.js"></script>
     <script src="js/views/reviewthumbs.js"></script>
     <script src="js/views/reviewsview.js"></script>
+    <script type="text/javascript">
+        splat.csrftoken = '<%= csrftoken %>';
+    </script>
     <script src="js/main.js"></script>
+
   </body>
+
 </html>
