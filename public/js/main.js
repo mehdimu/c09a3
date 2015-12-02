@@ -7,8 +7,7 @@ Backbone.ajax = function() {
     Backbone.$.ajaxSetup.call(Backbone.$, {beforeSend: function(jqXHR){
         jqXHR.setRequestHeader("X-CSRF-Token", splat.csrftoken);
     }});
-console.log("CSRF TOKEN:");
-console.log(splat.csrftoken);
+    console.log(splat.csrftoken);
     return Backbone.$.ajax.apply(Backbone.$, arguments);
 };
 
