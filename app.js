@@ -19,7 +19,6 @@ var http = require("http"),
     compression = require("compression"),
     session = require("express-session"),
     bodyParser = require("body-parser"),
-    cookieParser = require('cookie-parser'),
     methodOverride = require("method-override"),
     directory = require("serve-index"),
     errorHandler = require("errorhandler"),
@@ -75,7 +74,7 @@ var app = express();
 app.set('port', process.env.PORT || config.port);
 
 // activate basic HTTP authentication (to protect your solution files)
-app.use(basicAuth('splat', 'pass'));  
+//app.use(basicAuth('splat', 'pass'));  
 
 // change param to control level of logging
 app.use(logger(config.default));  /* 'default', 'short', 'tiny', 'dev' */
@@ -167,16 +166,21 @@ app.engine('.html', require('ejs').__express);
 app.set('views', __dirname + '/public');
 // When client-side requests index.html, perform template substitution on it
 app.get('/index.html', function(req, res) {
+    console.log("------------");
+    console.log(req);
     // req.csrfToken() returns a fresh random CSRF token value
     res.render('index.html', {csrftoken: req.csrfToken()});
 });
+
 //BEGIN CSRF TOKEN
 app.use(function (err, req, res, next) {
-  if (err.code !== 'EBADCSRFTOKEN'){ 
-    return next(err);}
+  if (err.code == 'EBADCSRFTOKEN'){ 
+	res.status(403).send('Please reload the app, the session has expired.');
+   }else{
   // handle CSRF token errors here
-  res.status(403);
-  res.send('Please reload the app, the session has expired.');
+	return next(err);
+}
+  
 });
 //END CSRF TOKEN
 
