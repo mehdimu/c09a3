@@ -1,0 +1,6 @@
+The most difficult part about this assignment was getting the setup of Grunt and configuring the correct versions of the packages for the node_modules. 
+A lot of the code was given in the starter files, hence there was not much room to experiment around with.
+
+Something to note for the marker:
+We used mongolab to manage the MongoDB.
+The authentication has been disabled because of the test cases.
