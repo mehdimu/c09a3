@@ -28,5 +28,16 @@
     <script src="../js/collections/movies.js"></script>
     <!-- App tests -->
     <script src="apptests.js"></script>
+    <script type="text/javascript">
+        splat.csrftoken = '<%= csrftoken %>';
+        Backbone.ajax = function() {
+        // Invoke $.ajaxSetup in the context of Backbone.$
+        Backbone.$.ajaxSetup.call(Backbone.$, {beforeSend: function(jqXHR){
+            jqXHR.setRequestHeader("X-CSRF-Token", splat.csrftoken);
+        }});
+        console.log(splat.csrftoken);
+        return Backbone.$.ajax.apply(Backbone.$, arguments);
+    };
+    </script>
   </body>
 </html>

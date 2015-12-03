@@ -12,17 +12,17 @@
 	"starring":["Bruce Willis,Amy Winemouse"]});  // model
     movie.urlRoot = '/movies';
     // authenticate user with valid credentials
-    var user = new splat.User({username:"a", password:"a", login: 1});
+    var user = new splat.User({username:"ab", password:"ab", login: 1});
     var auth = user.save(null, {
         type: 'put',
         success: function (model, resp) {
-            assert.equal( resp.username, "a",
+            assert.equal( resp.username, "ab",
 		"Successful login with valid credentials" );
             done1();
         }
     });
     var saveMovie = $.Deferred();
-    auth.done(function() { 
+    auth.done(function() {
 	// create new movie model in DB
         movie.save(null, {
 	    wait: true,

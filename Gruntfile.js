@@ -4,11 +4,19 @@ module.exports = function(grunt) {
 
 	uglify: {
 	    options: {
-		banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+
+			banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
 	    },
 	    build: {
 	    	files: [
-	    		{ src: 'public/js/**/*.js', dest: 'public/js/<%= pkg.name %>-min.js'}
+	    		{ src: [
+	    			'public/js/models/*.js',
+	    			'public/js/collections/*.js',
+	    			'public/js/views/*.js',
+	    			'public/js/main.js',
+	    			'public/js/utils.js',
+
+	    			], dest: 'public/js/<%= pkg.name %>-min.js'}
 	    	]
 	    },
 	},
@@ -39,7 +47,6 @@ module.exports = function(grunt) {
 			strict: "global",
 			node: true,
 			globals: {
-
 			    jQuery: true,
 			    _: false,
 			    $: false,

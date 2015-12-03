@@ -10,7 +10,7 @@ var fs = require('fs'),
     url = require("url"),
     bcrypt = require("bcrypt");
 
-// create image-upload directory if it does not exist 
+// create image-upload directory if it does not exist
 fs.exists(__dirname + '/../public/img/uploads', function (exists) {
     if (!exists) {
         fs.mkdir(__dirname + '/../public/img/uploads', function (err) {
@@ -83,7 +83,7 @@ exports.api = function(req, res) {
 exports.getMovie = function(req, res) {
     Movie.findById(req.params.id, function(err, movie) {
         if (err) {
-            res.status(500).send("Sorry, unable to retrieve movie at this time (" 
+            res.status(500).send("Sorry, unable to retrieve movie at this time ("
                 +err.message+ ")" );
         } else if (!movie) {
             res.status(404).send("Sorry, that movie doesn't exist;"
@@ -94,7 +94,7 @@ exports.getMovie = function(req, res) {
     });
 };
 
-// return movies collection 
+// return movies collection
 exports.getMovies = function (req, res) {
     Movie.find(function(err, movies) {
         if (!err) {
@@ -109,7 +109,7 @@ exports.getMovies = function (req, res) {
 function savePoster(movie, callback) {
     var movieId = movie.get('_id');
     var poster = movie.get('poster');
-    if (poster) 
+    if (poster)
         var imgPrefix = poster.split(';')[0].split("/")[0];
     // only save image if it is a dataURL (not if it is a file path string)
     if (poster && imgPrefix.search(/^data:image$/) === 0) {
@@ -122,14 +122,14 @@ function savePoster(movie, callback) {
             if (err) {
                 res.status(500).send("Unable to save movie poster at this time " + err );
 	    };
-	    // add a "random" value to the poster URL so the browser will 
-	    // fetch the updated image rather than using its old (cached) 
+	    // add a "random" value to the poster URL so the browser will
+	    // fetch the updated image rather than using its old (cached)
 	    // copy, which has the same root name (modelId.imgType)
 	    var timestamp = new Date();
             movie.set('poster', posterURL+'?'+timestamp.getTime());
-	    // if this is an image update with a different suffix, 
+	    // if this is an image update with a different suffix,
 	    // should remove old image file, else get file proliferation
-            // Not implemented here, to add use:  fs.unlink(...) 
+            // Not implemented here, to add use:  fs.unlink(...)
 	    if (callback) {
 	        callback();
 	    }
@@ -143,8 +143,9 @@ function savePoster(movie, callback) {
 };
 
 exports.addMovie = function (req, res) {
+    console.log("add movies ere");
     var movie = new Movie(req.body);
-    // set model userid here rather than client, since request must be 
+    // set model userid here rather than client, since request must be
     // server authenticated before the request is handled
     movie.set('userid', req.session.userid);
     savePoster(movie, function() {
@@ -172,7 +173,7 @@ exports.editMovie = function(req, res){
                 if (!saveErr) {
                     res.status(200).send(movie);
                 } else if (saveErr.err && saveErr.err.indexOf("E11000") !== -1) {
-                    res.status(403).send("Sorry, movie " +req.body.title+ 
+                    res.status(403).send("Sorry, movie " +req.body.title+
 				" directed by "
                               +req.body.director+ " already exists.");
                 } else if (saveErr.message) {
@@ -284,8 +285,8 @@ console.log('addReview ', typeof(movie), movie, movieErr, movieResult);
 	      });
 	  });
       } else if (err.err && err.err.indexOf("E11000") > -1) {
-            res.send(403, "Sorry, reviewer " +review.reviewname+ 
-		" affiliated with " +review.reviewaffil+ 
+            res.send(403, "Sorry, reviewer " +review.reviewname+
+		" affiliated with " +review.reviewaffil+
 		" already reviewed this movie");
       } else {
             res.statue(500).send('Unable to save review at this time: please try again later '
@@ -318,8 +319,8 @@ exports.playMovie = function(req, res) {
             var total = stats.size;
             var end = positions[1] ? parseInt(positions[1], 10) : total - 1;
             var chunksize = (end - start) + 1;
-      
-            // HTML5-compatible response-headers describing streamed video 
+
+            // HTML5-compatible response-headers describing streamed video
             res.writeHead(206, {
               "Content-Range": "bytes " + start + "-" + end + "/" + total,
               "Accept-Ranges": "bytes",
@@ -359,6 +360,7 @@ exports.auth = function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
     if (!username || !password) {
+      console.log("invalid user");
       res.status(403).send('Invalid username-password combination, please try again');
     };
     User.findOne({username:username}, function(err, user){
@@ -380,14 +382,14 @@ exports.auth = function (req, res) {
       } else if (!err) {  // unrecognized username, but not DB error
         res.status(403).send('Invalid username-password combination, please try again');
       } else {  // error response from DB
-        res.status(500).send("Unable to login at this time; please try again later " 
+        res.status(500).send("Unable to login at this time; please try again later "
 			+ err.message);
       }
     });
   } else { // logout request
       req.session.auth = false; //ADD CODE ASRA
       req.username = undefined; //ADD CODE ASRA
-      req.session.destroy(); // destroy session in the session-store
+     // req.session.destroy(); // destroy session in the session-store
       res.status(200).send({'userid': undefined, 'username': undefined});
   };
 };

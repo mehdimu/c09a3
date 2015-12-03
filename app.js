@@ -37,6 +37,7 @@ var options = {
 // middleware check that req is associated with an authenticated session
 function isAuthd(req, res, next) {
     // A3 ADD CODE BLOCK
+    console.log("not logged in nigga");
     if (req.session && req.session.auth) {
         return next();
     } else {
@@ -168,10 +169,14 @@ app.engine('.html', require('ejs').__express);
 app.set('views', __dirname + '/public');
 // When client-side requests index.html, perform template substitution on it
 app.get('/index.html', function(req, res) {
-    console.log("------------");
-    console.log(req);
     // req.csrfToken() returns a fresh random CSRF token value
     res.render('index.html', {csrftoken: req.csrfToken()});
+});
+
+app.get('/test/test.html', function(req, res) {
+    // req.csrfToken() returns a fresh random CSRF token value
+    console.log("i come here");
+    res.render('test/test.html', {csrftoken: req.csrfToken()});
 });
 
 //BEGIN CSRF TOKEN

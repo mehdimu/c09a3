@@ -1,6 +1,6 @@
 {
   "name": "splat",
-  "port": 41456,
+  "port": 41001,
   "version": "1.0.0",
   "description": "A2",
   "main": "app.js",
