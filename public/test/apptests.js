@@ -290,12 +290,12 @@ QUnit.jUnitReport = function(report) {
     var done2 = assert.async();
     var done3 = assert.async();
     var movie = new splat.Movie();  // model
-    movie.set("_id", "565e34724ffdbcf533d1b0bf");
+    movie.set("_id", "565fb41e3cec360457f67166");
     movie.urlRoot = '/movies';
     // fetch existing movie model
     var movieFetch = movie.fetch({
         success: function(movie, resp) {
-            assert.equal( resp._id, "565e34724ffdbcf533d1b0bf",
+            assert.equal( resp._id, "565fb41e3cec360457f67166",
 		"Successful movie fetch" );
 	    done1();
         }
